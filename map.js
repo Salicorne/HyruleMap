@@ -1,5 +1,6 @@
 let img = {"w": 750, "h": 625};
 let canvas = {"w": 1600, "h": 900};
+let limits = {"min": 0.5, "max": 100};
 
 let map = [];
 let posx = 0;
@@ -58,17 +59,21 @@ if (cvs.getContext) {
 		e.preventDefault();
 		if (e.originalEvent.wheelDelta > 0 || e.originalEvent.detail < 0) {
 			// zoom in
-			zoomFactor *= 1.1;
-			if(zoomFactor/Math.pow(2, zoomLevel-1) > 1 && zoomLevel < 5) { zoomLevel++; initMap(); }
-			posx += (e.originalEvent.clientX + posx) * 0.1;
-			posy += (e.originalEvent.clientY + posy) * 0.1;
+			if(zoomFactor < limits.max) {
+				zoomFactor *= 1.1;
+				if(zoomFactor/Math.pow(2, zoomLevel-1) > 1 && zoomLevel < 5) { zoomLevel++; initMap(); }
+				posx += (e.originalEvent.clientX + posx) * 0.1;
+				posy += (e.originalEvent.clientY + posy) * 0.1;
+			}
 		}
 		else {
 			// zoom out
-			zoomFactor *= 0.9;
-			if(zoomFactor/Math.pow(2, zoomLevel-2) < 1 && zoomLevel > 1) { zoomLevel--; initMap(); }
-			posx -= (e.originalEvent.clientX + posx) * 0.1;
-			posy -= (e.originalEvent.clientY + posy) * 0.1;
+			if(zoomFactor > limits.min) {
+				zoomFactor *= 0.9;
+				if(zoomFactor/Math.pow(2, zoomLevel-2) < 1 && zoomLevel > 1) { zoomLevel--; initMap(); }
+				posx -= (e.originalEvent.clientX + posx) * 0.1;
+				posy -= (e.originalEvent.clientY + posy) * 0.1;
+			}
 		}
 		drawMap();
 	})
